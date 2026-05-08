@@ -1,0 +1,40 @@
+# Virtual Environment
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Large Data Files
+data/raw/*.tif
+data/raw/*.shp
+data/raw/*.geojson
+data/raw/*.zip
+data/processed/*.tif
+data/outputs/*.tif
+
+# Google Earth Engine credentials
+.config/earthengine/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / API keys
+*.env
+secrets.json
