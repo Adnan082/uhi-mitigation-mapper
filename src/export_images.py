@@ -89,31 +89,32 @@ tracts_gdf['GEOID'] = tracts_gdf['GEOID'].astype(str)
 merged             = tracts_gdf.merge(vuln_df[['GEOID', 'vulnerability_score']], on='GEOID', how='left')
 merged['vulnerability_score'] = merged['vulnerability_score'].fillna(0)
 
-fig, ax = plt.subplots(1, 1, figsize=(10, 9))
-fig.subplots_adjust(bottom=0.15)
+fig = plt.figure(figsize=(10, 10))
+ax  = fig.add_axes([0.1, 0.15, 0.8, 0.75])  # [left, bottom, width, height]
 
+norm  = mcolors.Normalize(vmin=0, vmax=1)
+cmap  = plt.cm.YlOrRd
+
+merged['color'] = merged['vulnerability_score'].apply(lambda x: cmap(norm(x)))
 merged.plot(
-    column='vulnerability_score',
-    cmap='YlOrRd',
+    color=merged['color'].tolist(),
     linewidth=0.5,
     edgecolor='white',
-    legend=False,
     ax=ax
 )
 
-# Separate colorbar with enough room below the map
-cax  = fig.add_axes([0.15, 0.06, 0.7, 0.03])
-norm = mcolors.Normalize(vmin=0, vmax=1)
-sm   = plt.cm.ScalarMappable(cmap='YlOrRd', norm=norm)
-sm.set_array([])
-cbar = fig.colorbar(sm, cax=cax, orientation='horizontal')
-cbar.set_label('Vulnerability Score (0 = Low, 1 = High)', fontsize=10)
-
-ax.set_title('Community Vulnerability Score — Albuquerque, NM', fontsize=14, fontweight='bold', pad=15)
-ax.set_xlabel('Longitude')
-ax.set_ylabel('Latitude')
+ax.set_title('Community Vulnerability Score — Albuquerque, NM', fontsize=14, fontweight='bold', pad=12)
+ax.set_xlabel('Longitude', fontsize=10)
+ax.set_ylabel('Latitude', fontsize=10)
 ax.set_xlim([-106.90, -106.45])
 ax.set_ylim([34.93, 35.32])
+
+# Colorbar in its own axis — completely separate from the map
+cax  = fig.add_axes([0.1, 0.06, 0.8, 0.025])
+sm   = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+sm.set_array([])
+cbar = fig.colorbar(sm, cax=cax, orientation='horizontal')
+cbar.set_label('Vulnerability Score  (0 = Low  →  1 = High)', fontsize=10)
 
 plt.savefig(os.path.join(assets_dir, 'vulnerability_map.png'), dpi=150, bbox_inches='tight')
 plt.close()
